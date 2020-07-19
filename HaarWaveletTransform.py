@@ -168,7 +168,7 @@ def main():
             img1_converted=wavelet(img_gray)
             img2_converted=wavelet(img1_converted)
             img3_converted=wavelet(img2_converted)
-            cv2.imwrite("{}-converted.jpg".format(name),img3_converted)
+            cv2.imwrite("./output/{}-converted.jpg".format(name),img3_converted)
 
             # エッジマップ作成
             emax1=edgeanalysis(img3_converted,1)
