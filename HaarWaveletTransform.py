@@ -162,7 +162,7 @@ def main():
 
         # 16の倍数か調べる
         if height%16!=0 or width%16!=0:
-            print("STOP")
+            print("{}-STOP".format(name))
         else:
             # ウェーブレット変換
             img1_converted=wavelet(img_gray)
