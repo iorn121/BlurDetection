@@ -3,6 +3,7 @@ import cv2
 from decimal import *
 import os, glob
 import sys
+from pathlib import Path
 
 # ウェーブレット変換
 def wavelet(img):
@@ -144,36 +145,40 @@ def countedge(img1,img2,img3,thre):
 
 def main():
     # ファイル取得
-    _,infile, outfile1, outfile2 = sys.argv
+    files = glob.glob("./input/*.jpg")
 
-    # 画像の読み込み
-    img_bgr=cv2.imread(infile)
+    for file in files:
 
-    # グレースケールに変換
-    img_gray=cv2.cvtColor(img_bgr,cv2.COLOR_BGR2GRAY)
+        name = Path(file).stem
 
-    # 縦横ピクセル数取得
-    height, width = img_gray.shape
+        # 画像の読み込み
+        img_bgr=cv2.imread(file)
 
-    # 16の倍数か調べる
-    if height%16!=0 or width%16!=0:
-        print(STOP)
-    else:
-        # ウェーブレット変換
-        img1_converted=wavelet(img_gray)
-        img2_converted=wavelet(img1_converted)
-        img3_converted=wavelet(img2_converted)
-        cv2.imwrite(outfile1,img3_converted)
+        # グレースケールに変換
+        img_gray=cv2.cvtColor(img_bgr,cv2.COLOR_BGR2GRAY)
 
-        # エッジマップ作成
-        emax1=edgeanalysis(img3_converted,1)
-        emax2=edgeanalysis(img3_converted,2)
-        emax3=edgeanalysis(img3_converted,3)
-        
-        # ラベルマップ作成
-        labelmap=countedge(emax1,emax2,emax3,25)
+        # 縦横ピクセル数取得
+        height, width = img_gray.shape
 
-        cv2.imwrite(outfile2,labelmap)
+        # 16の倍数か調べる
+        if height%16!=0 or width%16!=0:
+            print("STOP")
+        else:
+            # ウェーブレット変換
+            img1_converted=wavelet(img_gray)
+            img2_converted=wavelet(img1_converted)
+            img3_converted=wavelet(img2_converted)
+            cv2.imwrite("{}-converted.jpg".format(name),img3_converted)
+
+            # エッジマップ作成
+            emax1=edgeanalysis(img3_converted,1)
+            emax2=edgeanalysis(img3_converted,2)
+            emax3=edgeanalysis(img3_converted,3)
+            
+            # ラベルマップ作成
+            labelmap=countedge(emax1,emax2,emax3,25)
+
+            cv2.imwrite("{}-edgemap.jpg".format(name),labelmap)
 
 if __name__ == "__main__":
     main()
