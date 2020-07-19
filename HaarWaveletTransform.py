@@ -178,7 +178,7 @@ def main():
             # ラベルマップ作成
             labelmap=countedge(emax1,emax2,emax3,25)
 
-            cv2.imwrite("{}-edgemap.jpg".format(name),labelmap)
+            cv2.imwrite("./output/{}-edgemap.jpg".format(name),labelmap)
 
 if __name__ == "__main__":
     main()
