@@ -5,7 +5,9 @@ import os, glob
 import sys
 
 # ウェーブレット変換
-def wavelet(img,h,w):
+def wavelet(img):
+
+    h,w=img.shape
     
     # 縦横の半分
     h_half=int(h/2)
@@ -152,17 +154,15 @@ def main():
 
     # 縦横ピクセル数取得
     height, width = img_gray.shape
-    h=int(height/8)
-    w=int(width/8)
 
     # 16の倍数か調べる
     if height%16!=0 or width%16!=0:
         print(STOP)
     else:
         # ウェーブレット変換
-        img1_converted=wavelet(img_gray,height,width)
-        img2_converted=wavelet(img1_converted,int(height/2),int(width/2))
-        img3_converted=wavelet(img2_converted,int(height/4),int(width/4))
+        img1_converted=wavelet(img_gray)
+        img2_converted=wavelet(img1_converted)
+        img3_converted=wavelet(img2_converted)
         cv2.imwrite(outfile1,img3_converted)
 
         # エッジマップ作成
