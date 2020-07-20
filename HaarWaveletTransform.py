@@ -6,9 +6,11 @@ import sys
 from pathlib import Path
 
 # ウェーブレット変換
-def wavelet(img):
+def wavelet(img,level):
 
     h,w=img.shape
+    h=int(h/(2**(level-1)))
+    w=int(w/(2**(level-1)))
     
     # 縦横の半分
     h_half=int(h/2)
@@ -129,23 +131,17 @@ def countedge(img1,img2,img3,thre):
     else:
         BlurExtent=0
 
-    # ブレ判定
-    print("ブレ度数：", Per)
-    if Per>0.05:
-        print("ブレ無")
-    else:
-        print("ブレ有")
-
-    # ブレの強度
-    print("ブレ強度：", BlurExtent)
+    
 
     # ラベルマップの戻し
-    return labelmap
+    return labelmap, Per, BlurExtent
 
 
 def main():
     # ファイル取得
     files = glob.glob("./input/*.jpg")
+
+    result = "全画像の分析結果\n\n"
 
     for file in files:
 
@@ -165,10 +161,10 @@ def main():
             print("{}-STOP".format(name))
         else:
             # ウェーブレット変換
-            img1_converted=wavelet(img_gray)
-            img2_converted=wavelet(img1_converted)
-            img3_converted=wavelet(img2_converted)
-            cv2.imwrite("./output/{}-converted.jpg".format(name),img3_converted)
+            img1_converted=wavelet(img_gray,1)
+            img2_converted=wavelet(img1_converted,2)
+            img3_converted=wavelet(img2_converted,3)
+            cv2.imwrite("./output/{}_converted.jpg".format(name),img3_converted)
 
             # エッジマップ作成
             emax1=edgeanalysis(img3_converted,1)
@@ -176,9 +172,25 @@ def main():
             emax3=edgeanalysis(img3_converted,3)
             
             # ラベルマップ作成
-            labelmap=countedge(emax1,emax2,emax3,25)
+            labelmap, Per, BlurExtent=countedge(emax1,emax2,emax3,25)
 
-            cv2.imwrite("./output/{}-edgemap.jpg".format(name),labelmap)
+            # ブレ判定
+            path_w = "output/result.txt"
+
+            result+="{}\nedge度数：".format(name)+str(Per)+"\n"
+            if Per>0.05:
+                result+="blur無"
+            else:
+                result+="blur有"
+
+            # ブレの強度
+            result+= "\nblur強度："+ str(BlurExtent) + "\n\n"
+
+            cv2.imwrite("./output/{}_edgemap.jpg".format(name),labelmap)
+
+    #出力
+    with open(path_w, mode="w") as f:
+        f.write(result)
 
 if __name__ == "__main__":
     main()
