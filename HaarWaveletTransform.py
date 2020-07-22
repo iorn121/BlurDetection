@@ -172,19 +172,19 @@ def main():
             emax3=edgeanalysis(img3_converted,3)
             
             # ラベルマップ作成
-            labelmap, Per, BlurExtent=countedge(emax1,emax2,emax3,25)
+            labelmap, Per, BlurExtent=countedge(emax1,emax2,emax3,30)
 
             # ブレ判定
             path_w = "output/result.txt"
 
-            result+="{}\nedge度数：".format(name)+str(Per)+"\n"
+            result+="{}\n鋭いエッジの割合：".format(name)+str(Per)+"\n"
             if Per>0.05:
-                result+="blur無"
+                result+="ブレ無"
             else:
-                result+="blur有"
+                result+="ブレ有"
 
             # ブレの強度
-            result+= "\nblur強度："+ str(BlurExtent) + "\n\n"
+            result+= "\nブレ強度："+ str(BlurExtent) + "\n\n"
 
             cv2.imwrite("./output/{}_edgemap.jpg".format(name),labelmap)
 
