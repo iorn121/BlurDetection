@@ -142,6 +142,7 @@ def main():
     files = glob.glob("./input/*.jpg")
 
     result = "全画像の分析結果\n\n"
+    path_w = "output/result.txt"
 
     for file in files:
 
@@ -175,7 +176,7 @@ def main():
             labelmap, Per, BlurExtent=countedge(emax1,emax2,emax3,30)
 
             # ブレ判定
-            path_w = "output/result.txt"
+           
 
             result+="{}\n鋭いエッジの割合：".format(name)+str(Per)+"\n"
             if Per>0.05:
